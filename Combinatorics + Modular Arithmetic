@@ -1,0 +1,41 @@
+int m=1000000007;
+ 
+int modular_multiplication(int a, int b)
+{
+    a%=m;
+    b%=m;
+    return ((a*b) % m + m) % m;
+}
+ 
+int power(int a, int b)
+{
+    if (b==0) return 1;
+    int p=power(a,b/2);
+    p=modular_multiplication(p,p);
+    if (b%2) p*=a;
+    return p%m;
+}
+ 
+int factorial(int a)
+{
+    int p=1;
+    for (int i=1;i<=a;i++) p=modular_multiplication(p,i);
+    return p%m;
+}
+ 
+int inv(int a)
+{ 
+    return power(a,m-2);
+}
+ 
+int modular_division(int a, int b)
+{ 
+    return modular_multiplication(a,inv(b));
+}
+ 
+int ncr(int a, int b)
+{
+    int k=factorial(b);
+    k=modular_multiplication(k,factorial(a-b));
+    return modular_division(factorial(a),k);
+}
