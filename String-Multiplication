@@ -1,0 +1,103 @@
+string add(string& s1, string& s2)
+{
+    int carry = 0;
+    int n = (int)s1.size(), m = (int)s2.size();
+
+    int i = n - 1, j = m - 1;
+    string ans;
+
+    while (i >= 0 || j >= 0)
+    {
+        if (i < 0)
+        {
+            int k = s2[j] - '0';
+            k += carry;
+            carry = 0;
+            ans.push_back((k % 10) + '0');
+            carry = k / 10;
+            j--;
+        }
+
+        else if(j < 0)
+        {
+            int k = s1[i] - '0';
+            k += carry;
+            carry = 0;
+            ans.push_back((k % 10) + '0');
+            carry = k / 10;
+            i--;
+        }
+
+        else
+        {
+            int k1 = s2[j] - '0', k2 = s1[i] - '0';
+            int k = k1 + k2 + carry;
+            ans.push_back((k % 10) + '0');
+            carry = k / 10;
+            i--;
+            j--;
+        }
+    }
+
+    if (carry)
+        ans.push_back(carry + '0');
+
+    reverse(ans.begin(), ans.end());
+    return ans;
+}
+
+string product(string& s1, int k)
+{
+    string ans;
+    int i = s1.size() - 1, carry = 0;
+
+    while (i >= 0)
+    {
+        int k1 = s1[i] - '0';
+        k1 *= k;
+        k1 += carry;
+
+        carry = k1 / 10;
+        ans.push_back((k1 % 10) + '0');
+        i--;
+    }
+
+    if (carry)
+        ans.push_back(carry + '0');
+
+    reverse(ans.begin(), ans.end());
+    return ans;
+}
+
+string multiply(string& s1, string& s2)
+{
+    int a = s1.size(), b = s2.size();
+
+    vector<string> nums;
+
+    for (int j = s2.size() - 1, x = 0; j >= 0; j--, x++)
+    {
+        string temp = product(s1, s2[j] - '0');
+        int k = x;
+        while (k--)
+            temp += '0';
+
+        nums.push_back(temp);
+    }
+
+    string ans = nums[0];
+    for (int i = 1; i < nums.size(); i++)
+    {
+        string temp = add(ans, nums[i]);
+        ans = temp;
+    }
+
+    int i = 0;
+    while (i < ans.size() && ans[i] == '0')
+        i++;
+
+    if (i == ans.size())
+        return "0";
+
+    return ans.substr(i);
+}
