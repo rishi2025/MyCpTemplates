@@ -1,0 +1,20 @@
+int dijkstra(vector<vector<pair<int,int>>>& adj, int source, int destination)
+{
+    vector<int> dist(adj.size(), 1e18);
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+
+    dist[source] = 0;
+    pq.push({0, source});
+
+    while (!pq.empty())
+    {
+        int node = pq.top().second, distance = pq.top().first;
+        pq.pop();
+
+        for (auto it: adj[node])
+            if (dist[it.first] > dist[node] + it.second)
+                dist[it.first] = dist[node] + it.second, pq.push({dist[it.first], it.first});
+    }
+
+    return dist[destination] == 1e18 ? -1 : dist[destination];
+}
