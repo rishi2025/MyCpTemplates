@@ -1,0 +1,41 @@
+vector<int> KMP(string& text, string& pattern)
+{
+    vector<int> lngPrefSuff(pattern.size(), 0);
+    vector<int> matches;
+
+    int prevLngPrefSuff = 0, i = 1, j = 0;
+
+    while (i < pattern.size())
+    {
+        if (pattern[i] == pattern[prevLngPrefSuff])
+            lngPrefSuff[i] = prevLngPrefSuff + 1, prevLngPrefSuff++;
+        else
+        {
+            if (prevLngPrefSuff == 0)
+                lngPrefSuff[i] = 0;
+            else
+                prevLngPrefSuff = lngPrefSuff[prevLngPrefSuff - 1], i--;
+        }
+        i++;
+    }
+
+    i = 0, j = 0;
+    while (i < text.size())
+    {
+        if (text[i] == pattern[j])
+            i++, j++;
+        
+        else
+        {
+            if (j == 0)
+                i++;
+            else
+                j = lngPrefSuff[j - 1];
+        }
+
+        if (j == pattern.size())
+            matches.push_back(i - j);
+    }
+
+    return matches;
+}
