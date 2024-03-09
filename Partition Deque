@@ -1,0 +1,131 @@
+class Partition_Deque
+{
+    vector<deque<int>> pd;
+    int rv;
+
+    int findSize(int n)
+    {
+        int low = 1, high = n, ans = -1;
+        while (low <= high)
+        {
+            int mid = (low + high) / 2;
+            if (mid * mid <= n)
+                ans = mid, low = mid + 1;
+            else
+                high = mid - 1;
+        }
+
+        return rv = ans;
+    }
+
+public:
+    Partition_Deque(int n)
+    {
+        int a = findSize(n);
+
+        if (a * a != n)
+            a++, rv++;
+
+        pd.resize(a);
+    }
+
+    void build(vector<int>& arr)
+    {
+        int j = 0;
+        for (int i = 0; i < arr.size(); i++)
+        {
+            if (pd[j].size() < rv)
+                pd[j].push_back(arr[i]);
+
+            if (pd[j].size() == rv)
+                j++;
+        }
+    }
+
+    void insert(int pos, int element)
+    {
+        int i = pos / rv;
+        int r = pos % rv;
+
+        if (i == pd.size())
+        {
+            deque<int> dq;
+            dq.push_back(element);
+
+            pd.push_back(dq);
+            return;
+        }
+
+        int k = pd[i].back();
+        pd[i].pop_back();
+
+        vector<int> stack;
+        while (pd[i].size() != r)
+            stack.push_back(pd[i].back()), pd[i].pop_back();
+
+        pd[i].push_back(element);
+        while (!stack.empty())
+            pd[i].push_back(stack.back()), stack.pop_back();
+
+        i++;
+        int need = 0;
+        while (i < pd.size())
+        {
+            pd[i].push_front(k);
+            k = pd[i].back();
+
+            if (pd[i].size() > rv)
+                pd[i].pop_back(), need = 1;
+            else
+                need = 0;
+
+            i++;
+        }
+
+        if (pd.back().size() > rv || need)
+        {
+            deque<int> dq;
+            dq.push_back(k);
+
+            pd.push_back(dq);
+        }
+    }
+
+    void remove(int pos)
+    {
+        int i = pos / rv;
+        int r = pos % rv;
+
+        vector<int> stack;
+        while (pd[i].size() != r + 1)
+            stack.push_back(pd[i].back()), pd[i].pop_back();
+
+        pd[i].pop_back();
+        while (!stack.empty())
+            pd[i].push_back(stack.back()), stack.pop_back();
+
+        i++;
+        int need = 0;
+        while (i < pd.size())
+        {
+            int k = pd[i].front();
+            pd[i - 1].push_back(k);
+            pd[i].pop_front();
+
+            i++;
+        }
+
+        if (pd.back().size() == 0)
+            pd.pop_back();
+    }
+
+    void display()
+    {
+        for (auto it: pd)
+        {
+            for (auto i: it)
+                cout << i << ' ';
+            cout << endl;
+        }
+    }
+};
