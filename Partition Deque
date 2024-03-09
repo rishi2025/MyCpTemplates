@@ -1,7 +1,7 @@
 class Partition_Deque
 {
     vector<deque<int>> pd;
-    int rv;
+    int rv, size, tsize = 0;
 
     int findSize(int n)
     {
@@ -22,11 +22,37 @@ public:
     Partition_Deque(int n)
     {
         int a = findSize(n);
+        size = n;
 
         if (a * a != n)
             a++, rv++;
 
         pd.resize(a);
+    }
+
+    void adjust()
+    {
+        if (tsize < 2 * size)
+            return;
+
+        findSize(tsize);
+        for (int i = 0; i < pd.size(); i++)
+        {
+            if (pd[i].empty())
+                continue;
+
+            while (pd[i].size() < rv)
+            {
+                if (!(i + 1 < pd.size() && !pd[i + 1].empty()))
+                    break;
+
+                int k = pd[i + 1].front();
+                pd[i + 1].pop_front();
+                pd[i].push_back(k);
+
+                i++;
+            }
+        }
     }
 
     void build(vector<int>& arr)
@@ -56,6 +82,19 @@ public:
             return;
         }
 
+        if (pd[i].size() < rv)
+        {
+            vector<int> stack;
+            while (pd[i].size() > r)
+                stack.push_back(pd[i].back()), pd[i].pop_back();
+
+            pd[i].push_back(element);
+            while (!stack.empty())
+                pd[i].push_back(stack.back()), stack.pop_back();
+
+            return;
+        }
+
         int k = pd[i].back();
         pd[i].pop_back();
 
@@ -68,7 +107,7 @@ public:
             pd[i].push_back(stack.back()), stack.pop_back();
 
         i++;
-        int need = 0;
+        int need = -1;
         while (i < pd.size())
         {
             pd[i].push_front(k);
@@ -82,7 +121,7 @@ public:
             i++;
         }
 
-        if (pd.back().size() > rv || need)
+        if (pd.back().size() > rv || need != 0)
         {
             deque<int> dq;
             dq.push_back(k);
