@@ -1,0 +1,46 @@
+class Fenwick_Tree 
+{
+private:
+    vector<int> bit;
+
+public:
+    Fenwick_Tree (int n) {
+        bit.resize(n + 1);
+    }
+
+    // 1-based indexing
+    void update (int i, int val)
+    {
+        while (i < bit.size())
+            bit[i] += val, i += (i & -i);
+    }
+
+    void build (vector<int>& arr)
+    {
+        for (int i = 1; i <= arr.size(); i++)
+            update(i, arr[i - 1]);
+    }
+
+    // 1-based indexing
+    int query (int l, int r)
+    {
+        int ans = 0;
+        l--;
+
+        while (l > 0)
+            ans -= bit[l], l -= (l & -l);
+
+        while (r > 0)
+            ans += bit[r], r -= (r & -r);
+
+        return ans;
+    }
+
+    void display()
+    {
+        cout << "Fenwick TREE: ";
+        for (auto it: bit)
+            cout << it << ' ';
+        cout << endl;
+    }
+};
