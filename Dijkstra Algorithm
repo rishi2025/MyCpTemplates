@@ -11,6 +11,9 @@ int dijkstra(vector<vector<pair<int,int>>>& adj, int source, int destination)
         int node = pq.top().second, distance = pq.top().first;
         pq.pop();
 
+        if (distance > dist[node])
+            continue;
+
         for (auto it: adj[node])
             if (dist[it.first] > dist[node] + it.second)
                 dist[it.first] = dist[node] + it.second, pq.push({dist[it.first], it.first});
